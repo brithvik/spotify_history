@@ -1,0 +1,4 @@
+.env
+.spotify-token
+.venv*/
+my_spotify_data/

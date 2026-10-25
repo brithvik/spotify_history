@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: spotify
+      POSTGRES_PASSWORD: spotify
+      POSTGRES_DB: spotify
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  poller:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://spotify:spotify@db:5432/spotify
+    volumes:
+      - ./.spotify-token:/app/.spotify-token
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

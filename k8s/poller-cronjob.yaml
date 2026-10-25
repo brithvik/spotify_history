@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: poller
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: poller
+              image: spotify-poller:v1
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - secretRef:
+                    name: spotify-credentials
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-credentials
+                      key: DATABASE_URL
+              resources:
+                requests: { memory: 64Mi, cpu: 50m }
+                limits: { memory: 256Mi }
+              volumeMounts:
+                - name: token
+                  mountPath: /app/.spotify-token
+                  subPath: .spotify-token
+          volumes:
+            - name: token
+              secret:
+                secretName: spotify-token
