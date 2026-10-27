@@ -2,3 +2,9 @@
 .spotify-token
 .venv*/
 my_spotify_data/
+__pycache__/
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform/**/*-config
+backup.sql

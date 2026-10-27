@@ -1,13 +1,4 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: postgres-credentials
-stringData:
-  POSTGRES_USER: spotify
-  POSTGRES_PASSWORD: spotify
-  POSTGRES_DB: spotify
-  DATABASE_URL: postgresql://spotify:spotify@postgres:5432/spotify
----
+# The postgres-credentials secret is now created by Terraform, with a random password.
 apiVersion: v1
 kind: Service
 metadata:
