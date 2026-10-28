@@ -15,7 +15,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: poller
-              image: spotify-poller:v1
+              image: spotify-poller:v2
               imagePullPolicy: IfNotPresent
               envFrom:
                 - secretRef:

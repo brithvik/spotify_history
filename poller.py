@@ -1,3 +1,6 @@
+import os
+import time
+from datetime import datetime
 """Save your recent Spotify plays to PostgreSQL, skipping ones already saved.
 
 Runs once and exits. Later, a Kubernetes CronJob will run it every few minutes.
@@ -31,7 +34,16 @@ CREATE TABLE IF NOT EXISTS plays (
     PRIMARY KEY (user_id, played_at, track_id)
 )
 """
-
+def connect_with_retry(url, attempts=10, delay=3):
+    """Wait for the database instead of crashing if it's still starting up."""
+    for attempt in range(1, attempts + 1):
+        try:
+            return psycopg.connect(url)
+        except psycopg.OperationalError:
+            if attempt == attempts:
+                raise
+            print(f"Database not ready (attempt {attempt}/{attempts}), retrying in {delay}s...")
+            time.sleep(delay)
 
 def main():
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
@@ -47,7 +59,7 @@ def main():
 
     new_plays = 0
     skipped = 0
-    with psycopg.connect(os.environ["DATABASE_URL"]) as conn:
+    with connect_with_retry(os.environ["DATABASE_URL"]) as conn:
         conn.execute(CREATE_TRACKS)
         conn.execute(CREATE_PLAYS)
 

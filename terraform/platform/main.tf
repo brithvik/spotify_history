@@ -20,7 +20,7 @@ terraform {
 variable "poller_image" {
   description = "Poller image to load into the cluster. Must match the image in k8s/poller-cronjob.yaml."
   type        = string
-  default     = "spotify-poller:v1"
+  default  = "spotify-poller:v2"
 }
 
 # ---------- Connect to the cluster built by layer 1 ----------
